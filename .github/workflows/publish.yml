@@ -1,0 +1,29 @@
+name: publish
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  publish-npm:
+    name: Publish to npm registry
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          registry-url: ${{ vars.NPM_REGISTRY }}
+          node-version: current
+          cache: yarn
+      - run: yarn install --frozen-lockfile
+      - name: Publish with prod config
+        run: yarn ci:publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Create a new release
+        run: yarn ci:release
+        env:
+          TAG: ${{ github.ref_name }}
+          GITHUBTOKEN: ${{ secrets.GIT_TOKEN }}
