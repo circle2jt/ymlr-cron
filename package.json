@@ -44,7 +44,7 @@
     "ci:build": "yarn ci:prebuild && tsc --project tsconfig.build.json && node bin/tsconfig && yarn ci:postbuild",
     "ci:postbuild": "cp README.md ./dist/",
     "ci:pretest": "yarn ci:lint && yarn ci:build",
-    "ci:test": "yarn ci:pretest && yarn jest --config=.jest/config.js && yarn ci:posttest",
+    "ci:test": "yarn ci:pretest && yarn jest --config=.jest/config.github.js && yarn ci:posttest",
     "ci:posttest": "yarn clean",
     "ci:tag": "node node_modules/ymlr ./scripts/create-tag.yaml",
     "ci:lint": "eslint --ext .ts ./src",

@@ -49,6 +49,10 @@ export class Cron extends Job {
   async execJob() {
     assert(this.time)
 
+    this.prRunning = new Promise<void>(resolve => {
+      this.rsRunning = resolve
+    })
+
     this.task = new CronJob(this.time, () => {
       this.logger.debug('Execute the task "%s"', this.proxy.name || 'cron')
       const task = this.task
@@ -63,17 +67,17 @@ export class Cron extends Job {
         }
       }) as any
     }, () => {
-      this.rsRunning && this.rsRunning(undefined)
+      this.rsRunning?.(undefined)
     }, this.scheduled, this.timezone, undefined, this.runOnInit)
-    this.prRunning = new Promise<void>(resolve => {
-      this.rsRunning = resolve
-    })
+
     await this.prRunning
     return []
   }
 
   async stop() {
-    this.task?.stop()
+    if (!this.task) return
+    this.task.stop()
+    this.task = undefined
     await this.prRunning
     this.prRunning = this.rsRunning = undefined
   }
