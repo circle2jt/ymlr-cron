@@ -1,7 +1,10 @@
 import assert from 'assert'
 import { CronJob } from 'cron'
 import merge from 'lodash.merge'
-import { Job } from 'ymlr/src/components/.job/job'
+import { ElementProxy } from 'ymlr/src/components/element-proxy'
+import { Element } from 'ymlr/src/components/element.interface'
+import Group from 'ymlr/src/components/group'
+import { GroupItemProps, GroupProps } from 'ymlr/src/components/group/group.props'
 
 /** |**  cron
   Schedule a task with cron pattern
@@ -31,7 +34,11 @@ import { Job } from 'ymlr/src/components/.job/job'
           - stop:                                               # Stop cron job, dont execute anymore
   ```
 */
-export class Cron extends Job {
+export class Cron implements Element {
+  ignoreEvalProps = ['prRunning', 'rsRunning']
+  readonly proxy!: ElementProxy<this>
+  readonly innerRunsProxy!: ElementProxy<Group<GroupProps, GroupItemProps>>
+
   time!: string
   scheduled = true
   runOnInit?: boolean
@@ -41,12 +48,15 @@ export class Cron extends Job {
   private prRunning?: Promise<void>
   private rsRunning?: (_: any) => void
 
+  get logger() {
+    return this.proxy.logger
+  }
+
   constructor(props: any) {
-    super(props)
     merge(this, props)
   }
 
-  async execJob() {
+  async exec() {
     assert(this.time)
 
     this.prRunning = new Promise<void>(resolve => {
@@ -56,7 +66,7 @@ export class Cron extends Job {
     this.task = new CronJob(this.time, () => {
       this.logger.debug('Execute the task "%s"', this.proxy.name || 'cron')
       const task = this.task
-      return this.addJobData({
+      return this.innerRunsProxy.exec({
         task,
         time: this.time,
         get nextDate() {
@@ -80,5 +90,9 @@ export class Cron extends Job {
     this.task = undefined
     await this.prRunning
     this.prRunning = this.rsRunning = undefined
+  }
+
+  async dispose() {
+    await this.stop()
   }
 }
