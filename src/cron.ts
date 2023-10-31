@@ -35,7 +35,7 @@ import { GroupItemProps, GroupProps } from 'ymlr/src/components/group/group.prop
   ```
 */
 export class Cron implements Element {
-  ignoreEvalProps = ['prRunning', 'rsRunning']
+  readonly ignoreEvalProps = ['prRunning', 'rsRunning', 'task']
   readonly proxy!: ElementProxy<this>
   readonly innerRunsProxy!: ElementProxy<Group<GroupProps, GroupItemProps>>
 
