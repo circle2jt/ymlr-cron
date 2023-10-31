@@ -1,10 +1,10 @@
 import assert from 'assert'
 import { CronJob } from 'cron'
 import merge from 'lodash.merge'
-import { ElementProxy } from 'ymlr/src/components/element-proxy'
-import { Element } from 'ymlr/src/components/element.interface'
-import Group from 'ymlr/src/components/group'
-import { GroupItemProps, GroupProps } from 'ymlr/src/components/group/group.props'
+import { type ElementProxy } from 'ymlr/src/components/element-proxy'
+import { type Element } from 'ymlr/src/components/element.interface'
+import type Group from 'ymlr/src/components/group'
+import { type GroupItemProps, type GroupProps } from 'ymlr/src/components/group/group.props'
 
 /** |**  cron
   Schedule a task with cron pattern
