@@ -47,6 +47,9 @@ export class Cron implements Element {
   task?: CronJob<any, any>
   private prRunning?: Promise<void>
   private rsRunning?: (_: any) => void
+  private get name() {
+    return this.proxy.name || 'cron'
+  }
 
   get logger() {
     return this.proxy.logger
@@ -63,10 +66,11 @@ export class Cron implements Element {
       this.rsRunning = resolve
     })
 
-    this.task = new CronJob(this.time, () => {
-      this.logger.debug('Execute the task "%s"', this.proxy.name || 'cron')
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    this.task = new CronJob(this.time, async () => {
       const task = this.task
-      return this.innerRunsProxy.exec({
+      this.logger.debug('Executing the task "%s" at %s', this.name, task?.lastDate)
+      await this.innerRunsProxy.exec({
         task,
         time: this.time,
         get nextDate() {
@@ -75,10 +79,13 @@ export class Cron implements Element {
         get lastDate() {
           return task?.lastDate()
         }
-      }) as any
+      })
+      this.logger.debug('Next task "%s" at %s', this.name, task?.nextDate().toLocaleString())
     }, () => {
       this.rsRunning?.(undefined)
     }, this.scheduled, this.timezone, undefined, this.runOnInit)
+
+    this.logger.debug('Start the first task "%s" at %s', this.name, this.task.nextDate().toLocaleString())
 
     await this.prRunning
     return []
@@ -86,6 +93,7 @@ export class Cron implements Element {
 
   async stop() {
     if (!this.task) return
+    this.logger.debug('Stoped')
     this.task.stop()
     this.task = undefined
     await this.prRunning
