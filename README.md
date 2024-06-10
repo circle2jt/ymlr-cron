@@ -10,6 +10,9 @@ Schedule jobs to do something base on cron pattern
 | Tags | Description |
 |---|---|
 | [cron](#cron) | Schedule a task with cron pattern |
+| [cron'del](#cron'del) | Stop a running cron job and delete it in cached |
+| [cron'pause](#cron'pause) | Pause a running cron job |
+| [cron'resume](#cron'resume) | Resume a pausing cron job |
 
 
 
@@ -31,7 +34,7 @@ Example:
 Print a message
 ```yaml
   - name: Schedule a job at 00:00:00 AM
-    cron:
+    ymlr-cron:
       time: 0 0 0 * * *
       scheduled: false          # Start ASAP. Default true
       runOnInit:                # This will immediately fire your onTick function as soon as the requisite initialization has happened. This option is set to false by default for backwards compatibility.
@@ -42,6 +45,74 @@ Print a message
                                                               # $parentState.nextDate: Provides the next date that will trigger an onTick.
 
         - stop:                                               # Stop cron job, dont execute anymore
+```  
+
+
+## <a id="cron'del"></a>cron'del  
+  
+Stop a running cron job and delete it in cached
+  
+
+Example:  
+
+```yaml
+  - name: Schedule a job                       # Create a cron job "cron01" and shedule it
+    ~ymlr-cron:
+      name: cron01
+      time: 0 * * * * *
+      scheduled: true
+      runs:
+        - name: Execute a job 1
+
+  - ~runs:
+      - ymlr-cron'del: cron01                # Pause and remove it in cached. After this, the cron task will be finished to keep playing the next steps
+
+  - name: cron job has been stoped !
+```  
+
+
+## <a id="cron'pause"></a>cron'pause  
+  
+Pause a running cron job
+  
+
+Example:  
+
+```yaml
+  - name: Schedule a job                       # Create a cron job "cron01" and shedule it
+    ~ymlr-cron:
+      name: cron01
+      time: 0 * * * * *
+      scheduled: true
+      runs:
+        - name: Execute a job 1
+
+  - ~runs:
+      - ymlr-cron'pause: cron01                # Pause it but keep it in cached to resume later
+      - sleep: 10s
+      - ymlr-cron'resume: cron01               # Resume it after 10s
+```  
+
+
+## <a id="cron'resume"></a>cron'resume  
+  
+Resume a pausing cron job
+  
+
+Example:  
+
+```yaml
+  - name: Schedule a job                       # Create a cron job "cron01" but not run yet
+    ~ymlr-cron:
+      name: cron01
+      time: 0 * * * * *
+      scheduled: false
+      runs:
+        - name: Execute a job 1
+
+  - ~runs:
+      - sleep: 5s                               # sleep 5s before start "cron01"
+      - ymlr-cron'resume: cron01
 ```  
 
 
