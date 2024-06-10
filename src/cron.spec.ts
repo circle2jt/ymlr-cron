@@ -16,7 +16,8 @@ test('Test simple cron each 1 sec', async () => {
   Testing.vars.ok = false
   cron = await Testing.createElementProxy(Cron, {
     time: '* * * * * *',
-    scheduled: true,
+    scheduled: true
+  }, {
     runs: [
       {
         vars: {

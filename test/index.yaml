@@ -1,0 +1,22 @@
+debug: all
+runs:
+  - tag'register:
+      ymlr-cron: /Users/thanhdoan/code/circle2jt/ymlr-cron/src/index.ts
+  - ~ymlr-cron:
+      name: cron1
+      time: "*/5 * * * * *"
+      schedule: true
+    runs:
+      - name: OK MEN
+        if: ${ false }
+
+  - ~runs:
+      - sleep: 5s
+      - name: pause it
+        ymlr-cron'pause: cron1
+      - sleep: 2s
+      - ymlr-cron'resume: cron1
+      - sleep: 3s
+      - ymlr-cron'del: cron1
+
+  - name: Finished
