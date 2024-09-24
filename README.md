@@ -36,13 +36,20 @@ Print a message
   - name: Schedule a job at 00:00:00 AM
     ymlr-cron:
       time: 0 0 0 * * *
+      #times:                                   # Support multple times
+      #  - 0 * * * * 1,2                        # Exec at each of minutes of MON, TUE
+      #  - 0 0 * * * 3,4,5,6,0                  # Exec each of 00:00 of WED, THU, FRI, SAT, SUN
+      scheduled: true
+      runs:
+        - name: Execute a job 1
       scheduled: false          # Start ASAP. Default true
       runOnInit:                # This will immediately fire your onTick function as soon as the requisite initialization has happened. This option is set to false by default for backwards compatibility.
       runs:
-        - echo: Executed a job at ${ $parentState.execTime }  # $parentState.time: cron pattern (Date)
-                                                              # $parentState.task: Task object
-                                                              # $parentState.lastDate: Tells you the last execution date.
-                                                              # $parentState.nextDate: Provides the next date that will trigger an onTick.
+        - echo: Executed a job at ${ $parentState.cronData.execTime }  # $parentState.cronData.time: cron pattern (Date)
+                                                              # $parentState.cronData.task: Task object
+                                                              # $parentState.cronData.index: Task index (when use multiple times)
+                                                              # $parentState.cronData.lastDate: Tells you the last execution date.
+                                                              # $parentState.cronData.nextDate: Provides the next date that will trigger an onTick.
 
         - stop:                                               # Stop cron job, dont execute anymore
 ```  
