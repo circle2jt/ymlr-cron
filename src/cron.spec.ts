@@ -22,7 +22,7 @@ test('Test simple cron each 1 sec', async () => {
       {
         vars: {
           ok: true,
-          lastDate: '${ $parentState.lastDate }'
+          lastDate: '${ $parentState.cronData.lastDate }'
         }
       }, {
         stop: null
@@ -32,4 +32,28 @@ test('Test simple cron each 1 sec', async () => {
   await cron.exec()
   expect(Testing.vars.ok).toBe(true)
   expect(Testing.vars.lastDate).toBeInstanceOf(Date)
+})
+
+test('Test cron with multiple times', async () => {
+  Testing.vars.idx = new Set()
+  cron = await Testing.createElementProxy(Cron, {
+    times: [
+      '*/3 * * * * *',
+      '*/4 * * * * *'
+    ],
+    scheduled: true,
+    runOnInit: false
+  }, {
+    runs: [
+      {
+        js: '$vars.idx.add($parentState.cronData.index)'
+      }
+    ]
+  })
+  setTimeout(() => {
+    void cron.dispose()
+  }, 5000)
+  await cron.exec()
+  expect(Testing.vars.idx).toContain(0)
+  expect(Testing.vars.idx).toContain(1)
 })
