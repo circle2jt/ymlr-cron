@@ -92,8 +92,12 @@ export class Cron implements Element {
     this.isPaused = !this.scheduled
 
     this.tasks = this.times.map((time, index) => {
+      const times = time.split(' ')
+      if (times.length === 6 && times[0] === '*' && times[1] !== '*') {
+        times[0] = new Date().getSeconds().toString()
+      }
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
-      const job = new CronJob(time, async () => {
+      const job = new CronJob(times.join(' '), async () => {
         const task = this.tasks?.[index]
         if (!task) return
         this.logger.debug('Executing the task "%s" at %s', this.name || this.proxy.name, task?.lastDate()?.toString())
@@ -142,9 +146,9 @@ export class Cron implements Element {
 
   async pause() {
     this.isPaused = true
-    this.tasks?.forEach(task => {
-      task.stop()
-    })
+    if (this.tasks?.length) {
+      await Promise.all(this.tasks.map(async task => await task.stop()))
+    }
   }
 
   async resume() {
@@ -160,9 +164,9 @@ export class Cron implements Element {
       this.isPaused = false
       this.rsRunning?.(undefined)
     } else {
-      this.tasks?.forEach(task => {
-        task.stop()
-      })
+      if (this.tasks?.length) {
+        await Promise.all(this.tasks.map(async task => await task.stop()))
+      }
     }
     await this.prRunning
     this.logger.debug('Stoped')

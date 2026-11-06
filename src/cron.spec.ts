@@ -46,7 +46,7 @@ test('Test cron with multiple times', async () => {
   }, {
     runs: [
       {
-        js: '$vars.idx.add($parentState.cronData.index)'
+        js: '$v.idx.add($parentState.cronData.index)'
       }
     ]
   })

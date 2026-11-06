@@ -1,6 +1,6 @@
 {
   "name": "ymlr-cron",
-  "version": "1.2.3-alpha.0",
+  "version": "1.2.3",
   "description": "Schedule jobs to do something base on cron pattern",
   "main": "src/index.js",
   "types": "src/index.d.ts",
@@ -33,12 +33,12 @@
     "ymlr plugin"
   ],
   "scripts": {
-    "v:next": "yarn doc && node node_modules/ymlr -e preid=alpha -e VERSIONNAME=prerelease -- ./scripts/up-version.yaml",
-    "v:patch": "yarn doc && node node_modules/ymlr -e preid=latest -e VERSIONNAME=patch -- ./scripts/up-version.yaml",
+    "v:next": "yarn doc && node /Users/thanh/code/circle2jt/ymlr/dist -e preid=alpha -e VERSIONNAME=prerelease -- ./scripts/up-version.yaml",
+    "v:patch": "yarn doc && node /Users/thanh/code/circle2jt/ymlr/dist -e preid=latest -e VERSIONNAME=patch -- ./scripts/up-version.yaml",
     "clean": "rm -rf dist",
-    "doc": "node node_modules/ymlr ./scripts/doc.yaml",
-    "start": "node --require ts-node/register node_modules/ymlr",
-    "dev": "nodemon --require ts-node/register --inspect-brk node_modules/ymlr test/index.yaml",
+    "doc": "node /Users/thanh/code/circle2jt/ymlr/dist ./scripts/doc.yaml",
+    "start": "node --require ts-node/register /Users/thanh/code/circle2jt/ymlr/dist",
+    "dev": "nodemon --require ts-node/register --inspect-brk /Users/thanh/code/circle2jt/ymlr/dist test/index.yaml",
     "test": "node --trace-warnings --expose-gc --inspect-brk node_modules/jest/bin/jest --config=.jest/dev.config.js --runInBand",
     "lint": "eslint --ext .ts --fix ./src",
     "ci:prebuild": "yarn clean",
@@ -47,10 +47,10 @@
     "ci:pretest": "yarn ci:lint && yarn ci:build",
     "ci:test": "yarn ci:pretest && yarn jest --config=.jest/config.js && yarn ci:posttest",
     "ci:posttest": "yarn clean",
-    "ci:tag": "node node_modules/ymlr ./scripts/create-tag.yaml",
+    "ci:tag": "node /Users/thanh/code/circle2jt/ymlr/dist ./scripts/create-tag.yaml",
     "ci:lint": "eslint --ext .ts ./src",
     "ci:publish": "yarn ci:build && cd ./dist && yarn publish --no-git-checks && cd ../",
-    "ci:release": "node node_modules/ymlr ./scripts/create-release.yaml"
+    "ci:release": "node /Users/thanh/code/circle2jt/ymlr/dist ./scripts/create-release.yaml"
   },
   "repository": {
     "type": "git",
@@ -63,7 +63,7 @@
   },
   "homepage": "https://github.com/circle2jt/ymlr-cron#readme",
   "dependencies": {
-    "cron": "^3.1.0",
+    "cron": "^4.1.0",
     "lodash.merge": "^4.6.2"
   },
   "publishConfig": {

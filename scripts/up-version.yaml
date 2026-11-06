@@ -3,13 +3,13 @@ vars:
   preid: alpha
   versionName: prerelease
 runs:
-  - name: ${ $vars.preid }/${ $vars.versionName }
+  - name: ${ $v.preid }/${ $v.versionName }
     scene:
       path: https://raw.githubusercontent.com/circle2jt/ymlr/dev/shares/version.yaml
       vars:
         force: true
-        preid: ${ $vars.preid }
-        versionName: ${ $vars.versionName }
+        preid: ${ $v.preid }
+        versionName: ${ $v.versionName }
         changeDir: ~~/changelogs
         changeFile: ~~/CHANGELOG.md
         commitFiles:
